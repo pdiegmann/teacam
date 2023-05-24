@@ -1,0 +1,1 @@
+unsupported_bash_version: "bash version 4 or higher is required!\n\n\tbrew install bash\n\n"

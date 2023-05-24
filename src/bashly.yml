@@ -1,0 +1,72 @@
+name: teacam
+help: Teaching Camunda Helper Script
+version: 0.1.0
+
+environment_variables:
+- name: CAMUNDA_CONSOLE_CLIENT_ID
+  help: Set your API Client ID
+  required: true
+- name: CAMUNDA_CONSOLE_CLIENT_SECRET
+  help: Set your API Client Secret
+  required: true
+- name: CAMUNDA_OAUTH_URL
+  help: Set the matching oAuth URL
+  default: https://login.cloud.camunda.io/oauth/token
+- name: CAMUNDA_CONSOLE_BASE_URL
+  help: Set the matching Console URL
+  default: https://api.cloud.camunda.io
+- name: CAMUNDA_CONSOLE_OAUTH_AUDIENCE
+  help: Set the matching Console oAuth Audience
+  default: api.cloud.camunda.io
+
+dependencies:
+  homebrew:
+    command: [brew]
+    help: run '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+  http_client:
+    command: [curl]
+    help: run 'brew install curl'
+  json:
+    command: [jq]
+    help: run 'brew install jq'
+
+commands:
+- name: new-dawn
+  alias: nd
+  help: delete old users and import new ones
+  args:
+    - name: file
+      help: file to import from
+      required: true
+      validate: file_exists
+- name: users
+  alias: u
+  help: Anything related to the users accessing Camdunda as part of the teaching organization
+
+  commands:
+  - name: list
+    alias: ls
+    default: true
+    help: list users
+  - name: delete
+    alias: del
+    help: delete user by mail
+    args:
+    - name: mail
+      help: mail address
+      required: true
+  - name: delete-non-owners
+    help: deletes all users who are not of role owner
+  - name: invite
+    help: invite user by mail
+    args:
+    - name: mail
+      help: mail address
+      required: true
+  - name: import
+    help: import users by mail, line by line
+    args:
+    - name: file
+      help: file to import from
+      required: true
+      validate: file_exists
