@@ -464,7 +464,9 @@ teacam_users_invite_command() {
   # src/users_invite_command.sh
   curl -s -f --request POST \
     --url ${CAMUNDA_CONSOLE_BASE_URL}/members/${args[mail]} \
-    --header "Authorization: Bearer ${CAMUNDA_OAUTH_TOKEN}"
+    --header "Authorization: Bearer ${CAMUNDA_OAUTH_TOKEN}" \
+    --header "Content-Type: application/json" \
+    --data "{\"orgRoles\": [\"developer\", \"analyst\"]}"
 }
 
 # :command.function
@@ -480,7 +482,7 @@ teacam_users_import_command() {
       --url ${CAMUNDA_CONSOLE_BASE_URL}/members/${line} \
       --header "Authorization: Bearer ${CAMUNDA_OAUTH_TOKEN}" \
       --header "Content-Type: application/json" \
-      --data "{\"orgRoles\": [\"taskuser\", \"analyst\"]}"
+      --data "{\"orgRoles\": [\"developer\", \"analyst\"]}"
   done < ${args[file]}
   echo "\n\nDONE."
 }

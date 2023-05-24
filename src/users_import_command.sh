@@ -8,6 +8,6 @@ do
     --url ${CAMUNDA_CONSOLE_BASE_URL}/members/${line} \
     --header "Authorization: Bearer ${CAMUNDA_OAUTH_TOKEN}" \
     --header "Content-Type: application/json" \
-    --data "{\"orgRoles\": [\"taskuser\", \"analyst\"]}"
+    --data "{\"orgRoles\": [\"developer\", \"analyst\"]}"
 done < ${args[file]}
 echo "\n\nDONE."
