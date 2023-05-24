@@ -420,14 +420,14 @@ validate_not_empty() {
 # :command.function
 teacam_new_dawn_command() {
   # src/new_dawn_command.sh
-  echo $(./$0 users delete-non-owners)
-  echo $(./$0 users import ${args[file]})
+  ./$0 users delete-non-owners
+  ./$0 users import ${args[file]}
 }
 
 # :command.function
 teacam_users_list_command() {
   # src/users_list_command.sh
-  curl -s -f --request GET \
+  curl -s --request GET \
     --url ${CAMUNDA_CONSOLE_BASE_URL}/members \
     --header "Authorization: Bearer ${CAMUNDA_OAUTH_TOKEN}"
 }
@@ -435,7 +435,7 @@ teacam_users_list_command() {
 # :command.function
 teacam_users_delete_command() {
   # src/users_delete_command.sh
-  curl -s -f --request DELETE \
+  curl -s --request DELETE \
     --url ${CAMUNDA_CONSOLE_BASE_URL}/members/${args[mail]} \
     --header "Authorization: Bearer ${CAMUNDA_OAUTH_TOKEN}"
 }
@@ -443,17 +443,17 @@ teacam_users_delete_command() {
 # :command.function
 teacam_users_delete_non_owners_command() {
   # src/users_delete_non_owners_command.sh
-  list=$(curl -s -f --request GET \
+  list=($(curl -s --request GET \
     --url ${CAMUNDA_CONSOLE_BASE_URL}/members \
-    --header "Authorization: Bearer ${CAMUNDA_OAUTH_TOKEN}" | jq -c '. - map(select(.roles[] | contains ("owner"))) | .[] .email')
+    --header "Authorization: Bearer ${CAMUNDA_OAUTH_TOKEN}" | jq -c '.[] | select(.roles | index("owner") | not) | .email'))
 
   i=0
   for email in "${list[@]}"
   do
     ((i=i+1))
-    echo -ne "[INFO] Processing ${i}/${${#list[@]}}: ${email}}\033[0K\r"
-    curl -s -f --request DELETE \
-      --url ${CAMUNDA_CONSOLE_BASE_URL}/members/${email} \
+    echo -ne "[INFO] Processing ${i}/${#list[@]}: ${email:1:-1}\033[0K\r"
+    curl -s --request DELETE \
+      --url ${CAMUNDA_CONSOLE_BASE_URL}/members/${email:1:-1} \
       --header "Authorization: Bearer ${CAMUNDA_OAUTH_TOKEN}"
   done
   echo "\n\nDONE."
@@ -462,7 +462,7 @@ teacam_users_delete_non_owners_command() {
 # :command.function
 teacam_users_invite_command() {
   # src/users_invite_command.sh
-  curl -s -f --request POST \
+  curl -s --request POST \
     --url ${CAMUNDA_CONSOLE_BASE_URL}/members/${args[mail]} \
     --header "Authorization: Bearer ${CAMUNDA_OAUTH_TOKEN}" \
     --header "Content-Type: application/json" \
@@ -478,7 +478,7 @@ teacam_users_import_command() {
   do
     ((i=i+1))
     echo -ne "[INFO] Processing ${i}/${lines}: ${line}}\033[0K\r"
-    curl --request POST \
+    curl -s --request POST \
       --url ${CAMUNDA_CONSOLE_BASE_URL}/members/${line} \
       --header "Authorization: Bearer ${CAMUNDA_OAUTH_TOKEN}" \
       --header "Content-Type: application/json" \
